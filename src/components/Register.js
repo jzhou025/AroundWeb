@@ -1,19 +1,37 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import { API_ROOT } from '../constants';
 
 class RegistrationForm extends Component {
     state = {
-      confirmDirty: false,
-      autoCompleteResult: [],
+        confirmDirty: false,
+        autoCompleteResult: [],
     };
   
     handleSubmit = (e) => {
-      e.preventDefault();
-      this.props.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values);
-        }
-      });
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                // Fire API call
+                fetch(`${API_ROOT}/signup`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: values.username,
+                        password: values.password,
+                    }),
+                }).then((response) => {
+                    if (response.ok) {
+                        return response;
+                    }
+                    throw new Error(response.statusText);
+                }).then(() => {
+                    message.success('Registration Succeed');
+                }).catch((e) => {
+                    message.error('Registration Failed');
+                    console.log(e);
+                })
+            }
+        });
     }
   
     handleConfirmBlur = (e) => {
@@ -40,7 +58,6 @@ class RegistrationForm extends Component {
   
     render() {
       const { getFieldDecorator } = this.props.form;
-  
       const formItemLayout = {
         labelCol: {
           xs: { span: 24 },
@@ -65,7 +82,7 @@ class RegistrationForm extends Component {
       };
       
       return (
-        <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <Form {...formItemLayout} onSubmit={this.handleSubmit} className="register">
           <Form.Item
             label="Username"
           >
