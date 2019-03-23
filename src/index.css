@@ -1,8 +1,9 @@
 /*  
 import all css files for our components here
 */
-@import "styles/App.css";
+@import 'styles/App.css';
 @import '~antd/dist/antd.css';
+@import 'styles/TopBar.css';
 
 body {
   margin: 0;
