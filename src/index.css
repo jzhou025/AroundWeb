@@ -1,3 +1,9 @@
+/*  
+import all css files for our components here
+*/
+@import "styles/App.css";
+@import '~antd/dist/antd.css';
+
 body {
   margin: 0;
   padding: 0;
