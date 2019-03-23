@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import {
-    Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,
-} from 'antd';
+import { Form, Input, Button } from 'antd';
 
-class RegistrationForm extends React.Component {
+class RegistrationForm extends Component {
     state = {
       confirmDirty: false,
       autoCompleteResult: [],
@@ -40,19 +38,8 @@ class RegistrationForm extends React.Component {
       callback();
     }
   
-    handleWebsiteChange = (value) => {
-      let autoCompleteResult;
-      if (!value) {
-        autoCompleteResult = [];
-      } else {
-        autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-      }
-      this.setState({ autoCompleteResult });
-    }
-  
     render() {
       const { getFieldDecorator } = this.props.form;
-      const { autoCompleteResult } = this.state;
   
       const formItemLayout = {
         labelCol: {
