@@ -21,4 +21,10 @@
     to {
       transform: rotate(360deg);
     }
-  }
+}
+
+.logout {
+    float: right;
+    margin-top: 15px;
+    margin-right: 20px;
+}
