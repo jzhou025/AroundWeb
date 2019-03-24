@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Icon, Input, Button, message } from 'antd';
-import { API_ROOT } from '../constants.js';
+import { API_ROOT } from '../constants';
 
 class NormalLoginForm extends React.Component {
     handleSubmit = (e) => {
@@ -23,8 +23,8 @@ class NormalLoginForm extends React.Component {
                     throw new Error(response.statusText);
                 }).then((data) => {
                     message.success('Login Succeed');
-                    console.log(data);
-                    this.props.handleLogin();
+                    //console.log(data);
+                    this.props.handleLogin(data);  // token
                 }).catch((err) => {
                     message.error('Login Failed');
                     console.log(err);
