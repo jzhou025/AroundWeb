@@ -26,9 +26,9 @@ class RegistrationForm extends Component {
                     throw new Error(response.statusText);
                 }).then(() => {
                     message.success('Registration Succeed');
-                }).catch((e) => {
+                }).catch((err) => {
                     message.error('Registration Failed');
-                    console.log(e);
+                    console.log(err);
                 })
             }
         });
