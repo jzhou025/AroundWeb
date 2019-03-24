@@ -6,6 +6,7 @@ import all css files for our components here
 @import 'styles/TopBar.css';
 @import 'styles/Main.css';
 @import 'styles/Register.css';
+@import 'styles/Login.css';
 
 body {
   margin: 0;
