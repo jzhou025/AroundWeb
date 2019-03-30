@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Button, Spin } from 'antd';
 import { GEO_OPTIONS, POS_KEY, API_ROOT, AUTH_HEADER, TOKEN_KEY } from '../constants';
+import { Gallery } from './Gallery';
 
 const TabPane = Tabs.TabPane;
 const operations = <Button>Extra Action</Button>;
@@ -30,6 +31,7 @@ export class Home extends React.Component {
     }
 
     onSuccessLoadGeoLocation = (position) => {
+        console.log(position);
         const { latitude, longitude } = position.coords;
         localStorage.setItem(POS_KEY, JSON.stringify({
             lat: latitude,
@@ -49,7 +51,7 @@ export class Home extends React.Component {
     }
 
     loadNearbyPosts = () => {
-        const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
+        const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
         const token = localStorage.getItem(TOKEN_KEY);
         this.setState({
             isLoadingPosts: true
@@ -60,25 +62,25 @@ export class Home extends React.Component {
                 Authorization: `${AUTH_HEADER} ${token}`
             }
         })
-        .then((response) => {
-            if(response.ok) {
-                return response.json();
-            }
-            throw new Error('Failed to load posts.');
-        })
-        .then((data) => {
-            console.log(data);
-            this.setState ({
-                isLoadingPosts: false,
-                posts: data ? data : []
-            });
-        })
-        .catch((error) => {
-            this.setState({
-                isLoadingPosts: false,
-                error
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to load posts.');
             })
-        });
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                    isLoadingPosts: false,
+                    posts: data ? data : []
+                });
+            })
+            .catch((e) => {
+                this.setState({
+                    isLoadingPosts: false,
+                    error: e.message
+                })
+            });
     }
 
     getImagePosts = () => {
@@ -90,7 +92,17 @@ export class Home extends React.Component {
         } else if (isLoadingPosts) {
             return <Spin tip="Loading posts..." />;
         } else if (posts && posts.length > 0) {
-            return 'image posts';   // render image posts
+            const images = this.state.posts.map((post) => {
+                return {
+                    user: post.user,
+                    src: post.url,
+                    thumbnail: post.url,
+                    caption: post.message,
+                    thumbnailWidth: 400,
+                    thumbnailHeight: 300,
+                }
+            });
+            return (<Gallery images={images} />);
         } else {
             return 'No nearby posts :(';
         }
