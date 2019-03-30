@@ -49,10 +49,8 @@ export class Home extends React.Component {
     }
 
     loadNearbyPosts = () => {
-       
         const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
         const token = localStorage.getItem(TOKEN_KEY);
-
         this.setState({
             isLoadingPosts: true
         });
@@ -69,6 +67,7 @@ export class Home extends React.Component {
             throw new Error('Failed to load posts.');
         })
         .then((data) => {
+            console.log(data);
             this.setState ({
                 isLoadingPosts: false,
                 posts: data ? data : []
@@ -83,15 +82,17 @@ export class Home extends React.Component {
     }
 
     getImagePosts = () => {
-        const { error, isLoadingGeoLocation, isLoadingPosts } = this.state;
+        const { error, isLoadingGeoLocation, isLoadingPosts, posts } = this.state;
         if (error) {
             return error;
         } else if (isLoadingGeoLocation) {
             return <Spin tip='Loading geo location...' />;
         } else if (isLoadingPosts) {
             return <Spin tip="Loading posts..." />;
-        } else {
+        } else if (posts && posts.length > 0) {
             return 'image posts';   // render image posts
+        } else {
+            return 'No nearby posts :(';
         }
     }
 
