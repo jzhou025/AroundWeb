@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button, message } from 'antd';
 import { CreatPostForm } from './CreatePostForm';
+import { API_ROOT, POS_KEY, AUTH_HEADER, TOKEN_KEY } from '../constants';
 
 export class CreatePostButton extends React.Component {
     state = {
@@ -19,6 +20,37 @@ export class CreatePostButton extends React.Component {
             confirmLoading: true,
         });
         setTimeout(() => {
+            this.form.validateFields((err, values) => {
+                if(!err) {
+                    console.log(values);
+                    const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
+                    const token = localStorage.getItem(TOKEN_KEY);
+                    const formData = new FormData();
+                    formData.set("message", values.message);
+                    formData.set("image", values.image[0].originFileObj);
+                    formData.set("lat", lat);
+                    formData.set("lon", lon);
+
+                    // Fire API -> upload data
+                    fetch(`${API_ROOT}/post`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            Authorization: `${AUTH_HEADER} ${token}`
+                        }
+                    }).then((response) => {
+                        if (response.ok) {
+                            return response;
+                        }
+                        throw new Error(response.statusText);
+                    }).then(() => {
+                        message.success('Post Created :)');
+                    }).catch((err) => {
+                        message.error('Create Post Failed :(');
+                    })
+                }
+                
+            });
             this.setState({
                 visible: false,
                 confirmLoading: false,
@@ -31,6 +63,10 @@ export class CreatePostButton extends React.Component {
         this.setState({
             visible: false,
         });
+    }
+
+    getFormRef = (formInstance) => {
+        this.form = formInstance;
     }
 
     render() {
@@ -48,7 +84,7 @@ export class CreatePostButton extends React.Component {
                     onCancel={this.handleCancel}
                     okText="Create"
                 >
-                    <CreatPostForm />
+                    <CreatPostForm ref={this.getFormRef}/>
                 </Modal>
             </div>
         );

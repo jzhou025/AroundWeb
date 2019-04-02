@@ -21,7 +21,6 @@ export class NormalCreatPostForm extends React.Component {
         return (
             <Form {...formItemLayout}>
                 <Form.Item label="Message">
-
                     {getFieldDecorator('Message', {
                         rules: [{
                             required: true, message: 'Please input your Message ^0^',
