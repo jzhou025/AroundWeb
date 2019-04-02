@@ -16,46 +16,50 @@ export class CreatePostButton extends React.Component {
     }
 
     handleOk = () => {
-        this.setState({
-            confirmLoading: true,
+        this.form.validateFields((err, values) => {
+            if (!err) {
+                console.log(values);
+                const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
+                const token = localStorage.getItem(TOKEN_KEY);
+                const formData = new FormData();
+                formData.set('message', values.message);
+                formData.set('image', values.image[0].originFileObj);
+                formData.set('lat', lat);
+                formData.set('lon', lon);
+                this.setState({
+                    confirmLoading: true,
+                });
+                // Fire API -> upload data
+                fetch(`${API_ROOT}/post`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        Authorization: `${AUTH_HEADER} ${token}`
+                    }
+                }).then((response) => {
+                    if (response.ok) {
+                        this.form.resetFields();
+                        this.setState({
+                            confirmLoading: false,
+                            visible: false
+                        });
+                        return this.props.loadNearbyPosts();
+                    }
+                    throw new Error(response.statusText);
+                }).then(() => {
+                    message.success('Post Created :)');
+                }).catch((err) => {
+                    message.error('Create Post Failed :(');
+                    this.setState({
+                        confirmLoading: false
+                    });
+                })
+            }
         });
-        setTimeout(() => {
-            this.form.validateFields((err, values) => {
-                if(!err) {
-                    console.log(values);
-                    const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
-                    const token = localStorage.getItem(TOKEN_KEY);
-                    const formData = new FormData();
-                    formData.set("message", values.message);
-                    formData.set("image", values.image[0].originFileObj);
-                    formData.set("lat", lat);
-                    formData.set("lon", lon);
-
-                    // Fire API -> upload data
-                    fetch(`${API_ROOT}/post`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            Authorization: `${AUTH_HEADER} ${token}`
-                        }
-                    }).then((response) => {
-                        if (response.ok) {
-                            return response;
-                        }
-                        throw new Error(response.statusText);
-                    }).then(() => {
-                        message.success('Post Created :)');
-                    }).catch((err) => {
-                        message.error('Create Post Failed :(');
-                    })
-                }
-                
-            });
-            this.setState({
-                visible: false,
-                confirmLoading: false,
-            });
-        }, 2000);
+        this.setState({
+            visible: false,
+            confirmLoading: false,
+        });
     }
 
     handleCancel = () => {
@@ -84,7 +88,7 @@ export class CreatePostButton extends React.Component {
                     onCancel={this.handleCancel}
                     okText="Create"
                 >
-                    <CreatPostForm ref={this.getFormRef}/>
+                    <CreatPostForm ref={this.getFormRef} />
                 </Modal>
             </div>
         );

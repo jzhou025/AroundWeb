@@ -21,7 +21,7 @@ export class NormalCreatPostForm extends React.Component {
         return (
             <Form {...formItemLayout}>
                 <Form.Item label="Message">
-                    {getFieldDecorator('Message', {
+                    {getFieldDecorator('message', {
                         rules: [{
                             required: true, message: 'Please input your Message ^0^',
                         }],
@@ -32,7 +32,7 @@ export class NormalCreatPostForm extends React.Component {
 
                 <Form.Item label="Image">
                     <div className="dropbox">
-                        {getFieldDecorator('Image', {
+                        {getFieldDecorator('image', {
                             valuePropName: 'fileList',
                             getValueFromEvent: this.normFile,
                             rules: [{
