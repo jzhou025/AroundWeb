@@ -10,12 +10,16 @@ export class NormalCreatPostForm extends React.Component {
         return e && e.fileList;
     }
 
-    beforeUpload = () => { return false; }
+    beforeUpload = () => false;
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const formItemLayout = {
+            labelCol: { span: 6 },
+            wrapperCol: { span: 14 },
+        };
         return (
-            <Form>
+            <Form {...formItemLayout}>
                 <Form.Item label="Message">
 
                     {getFieldDecorator('Message', {
