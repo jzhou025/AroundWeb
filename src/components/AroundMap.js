@@ -14,21 +14,22 @@ class NormalAroundMap extends React.Component {
     reloadMarkers = () => {
         const center = this.getCenter();
         const radius = this.getRadius();
-        this.props.loadNearbyPosts(center);
+        this.props.loadNearbyPosts(center, radius)
     }
 
     getCenter = () => {
         const center = this.map.getCenter();
         return {
             lat: center.lat(),
-            lon: center.lng(),
+            lon: center.lng()
         }
     }
 
     getRadius = () => {
         const center = this.map.getCenter();
-        const bounds = this.Map.getBounds();
-        if(center && bounds){
+        const bounds = this.map.getBounds();
+
+        if (center && bounds) {
             const ne = bounds.getNorthEast();
             const right = new window.google.maps.LatLng(center.lat(), ne.lng());
 
@@ -38,7 +39,6 @@ class NormalAroundMap extends React.Component {
 
     getMapRef = (mapInstance) => {
         this.map = mapInstance;
-        const center = this.map.getCenter();
     }
 
     render() {
@@ -50,7 +50,6 @@ class NormalAroundMap extends React.Component {
                 defaultCenter={{ lat, lng }}
                 onDragEnd={this.reloadMarkers}
                 onZoomChanged={this.reloadMarkers}
-
             >
                 {
                     this.props.posts.map(post => <AroundMarker key={post.url} post={post} />)
