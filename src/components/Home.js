@@ -51,14 +51,15 @@ export class Home extends React.Component {
         });
     }
 
-    loadNearbyPosts = () => {
-        const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
+    loadNearbyPosts = (center, radius) => {
+        const { lat, lon } = center ? center : JSON.parse(localStorage.getItem(POS_KEY));
+        const range = radius ? radius : 20;
         const token = localStorage.getItem(TOKEN_KEY);
         this.setState({
             isLoadingPosts: true
         });
         // Firs API call
-        fetch(`${API_ROOT}/search?lat=${lat}&lon=${lon}&range=20`, {
+        fetch(`${API_ROOT}/search?lat=${lat}&lon=${lon}&range=${range}`, {
             headers: {
                 Authorization: `${AUTH_HEADER} ${token}`
             }
@@ -115,17 +116,19 @@ export class Home extends React.Component {
             <Tabs className="main-tabs" tabBarExtraContent={operations}>
                 <TabPane tab="Image Posts" key="1">
                     <div>
-                        <h1>Hello Julia</h1>
+                        <h1>Hello</h1>
                         {this.getImagePosts()}
                     </div>
                 </TabPane>
                 <TabPane tab="Video Posts" key="2">Content of tab 2</TabPane>
                 <TabPane tab="Map" key="3">
-                    <AroundMap 
+                    <AroundMap
                         googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3CEh9DXuyjozqptVB5LA-dN7MxWWkr9s&v=3.exp&libraries=geometry,drawing,places"
                         loadingElement={<div style={{ height: `100%` }} />}
                         containerElement={<div style={{ height: `400px` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
+                        posts={this.state.posts}
+                        loadNearbyPosts={this.loadNearbyPosts}
                     />
                 </TabPane>
             </Tabs>

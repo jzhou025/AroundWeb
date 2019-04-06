@@ -8,6 +8,7 @@ import all css files for our components here
 @import 'styles/Register.css';
 @import 'styles/Login.css';
 @import 'styles/Home.css';
+@import 'styles/AroundMarkder.css';
 
 body {
     margin: 0;

@@ -4,18 +4,57 @@ import {
     withGoogleMap,
     GoogleMap,
     Marker,
-} from "react-google-maps";
+    InfoWindow
+} from 'react-google-maps';
+import { AroundMarker } from './AroundMarker';
+import { POS_KEY } from '../constants';
 
-export class NormalAroundMap extends React.Component {
+class NormalAroundMap extends React.Component {
+
+    reloadMarkers = () => {
+        const center = this.getCenter();
+        const radius = this.getRadius();
+        this.props.loadNearbyPosts(center);
+    }
+
+    getCenter = () => {
+        const center = this.map.getCenter();
+        return {
+            lat: center.lat(),
+            lon: center.lng(),
+        }
+    }
+
+    getRadius = () => {
+        const center = this.map.getCenter();
+        const bounds = this.Map.getBounds();
+        if(center && bounds){
+            const ne = bounds.getNorthEast();
+            const right = new window.google.maps.LatLng(center.lat(), ne.lng());
+
+            return 0.001 * window.google.maps.geometry.spherical.computeDistanceBetween(center, right)
+        }
+    }
+
+    getMapRef = (mapInstance) => {
+        this.map = mapInstance;
+        const center = this.map.getCenter();
+    }
+
     render() {
+        const { lat, lon: lng } = JSON.parse(localStorage.getItem(POS_KEY));
         return (
             <GoogleMap
-                defaultZoom={8}
-                defaultCenter={{ lat: -34.397, lng: 150.644 }}
+                ref={this.getMapRef}
+                defaultZoom={11}
+                defaultCenter={{ lat, lng }}
+                onDragEnd={this.reloadMarkers}
+                onZoomChanged={this.reloadMarkers}
+
             >
-                <Marker
-                    position={{ lat: -34.397, lng: 150.644 }}
-                />
+                {
+                    this.props.posts.map(post => <AroundMarker key={post.url} post={post} />)
+                }
             </GoogleMap>
         );
     }
