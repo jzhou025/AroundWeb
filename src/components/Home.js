@@ -100,6 +100,15 @@ export class Home extends React.Component {
         return (<Gallery images={images} />);
     }
 
+    getVideoPosts = () => {
+        const videos = this.state.posts
+            .filter(({type}) => type === 'video')
+            .map(({ user, url, message }) => {
+                return (<p key={url}>{`${user}: ${message}`}</p>);
+            });
+        return (<div>{videos}</div>);
+    }
+
     getPanelContent = (type) => {
         const { error, isLoadingGeoLocation, isLoadingPosts, posts } = this.state;
         if (error) {
@@ -109,9 +118,7 @@ export class Home extends React.Component {
         } else if (isLoadingPosts) {
             return <Spin tip="Loading posts..." />;
         } else if (posts && posts.length > 0) {
-            // if (image) -> getImagePosts
-            // else (video) -> ...
-            return type === 'image' ? this.getImagePosts() : 'video tab';
+            return type === 'image' ? this.getImagePosts() : this.getVideoPosts();
         } else {
             return 'No nearby posts :(';
         }
