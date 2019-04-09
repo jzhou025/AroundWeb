@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Spin } from 'antd';
+import { Tabs, Spin, Row, Col } from 'antd';
 import { GEO_OPTIONS, POS_KEY, API_ROOT, AUTH_HEADER, TOKEN_KEY } from '../constants';
 import { MAP_KEY } from '../keys';
 import { Gallery } from './Gallery';
@@ -104,9 +104,14 @@ export class Home extends React.Component {
         const videos = this.state.posts
             .filter(({type}) => type === 'video')
             .map(({ user, url, message }) => {
-                return (<p key={url}>{`${user}: ${message}`}</p>);
+                return (
+                    <Col span={6} key={url}>
+                        <video src={url} controls className='video-block'/>
+                        <p>{`${user}: ${message}`}</p>
+                    </Col>                   
+                );
             });
-        return (<div>{videos}</div>);
+        return (<Row gutter={32}>{videos}</Row>);
     }
 
     getPanelContent = (type) => {
