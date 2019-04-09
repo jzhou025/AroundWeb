@@ -87,6 +87,20 @@ export class Home extends React.Component {
     }
 
     getImagePosts = () => {
+        const images = this.state.posts
+            .filter(({ type }) => type === 'image')
+            .map(({ user, url, message }) => ({
+                user: user,
+                src: url,
+                thumbnail: url,
+                caption: message,
+                thumbnailWidth: 400,
+                thumbnailHeight: 300,
+            }));
+        return (<Gallery images={images} />);
+    }
+
+    getPanelContent = (type) => {
         const { error, isLoadingGeoLocation, isLoadingPosts, posts } = this.state;
         if (error) {
             return error;
@@ -95,33 +109,27 @@ export class Home extends React.Component {
         } else if (isLoadingPosts) {
             return <Spin tip="Loading posts..." />;
         } else if (posts && posts.length > 0) {
-            const images = this.state.posts.map((post) => {
-                return {
-                    user: post.user,
-                    src: post.url,
-                    thumbnail: post.url,
-                    caption: post.message,
-                    thumbnailWidth: 400,
-                    thumbnailHeight: 300,
-                }
-            });
-            return (<Gallery images={images} />);
+            // if (image) -> getImagePosts
+            // else (video) -> ...
+            return type === 'image' ? this.getImagePosts() : 'video tab';
         } else {
             return 'No nearby posts :(';
         }
     }
 
     render() {
-        const operations = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts}/>;
+        const operations = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts} />;
         return (
             <Tabs className="main-tabs" tabBarExtraContent={operations}>
                 <TabPane tab="Image Posts" key="1">
                     <div>
                         <h1>Hello</h1>
-                        {this.getImagePosts()}
+                        {this.getPanelContent('image')}
                     </div>
                 </TabPane>
-                <TabPane tab="Video Posts" key="2">Content of tab 2</TabPane>
+                <TabPane tab="Video Posts" key="2">
+                    {this.getPanelContent('video')}
+                </TabPane>
                 <TabPane tab="Map" key="3">
                     <AroundMap
                         googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${MAP_KEY}&v=3.exp&libraries=geometry,drawing,places`}
