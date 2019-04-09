@@ -23,20 +23,20 @@ export class NormalCreatPostForm extends React.Component {
                 <Form.Item label="Message">
                     {getFieldDecorator('message', {
                         rules: [{
-                            required: true, message: 'Please input your Message ^0^',
+                            required: true, message: 'Please input your message ^0^',
                         }],
                     })(
                         <Input placeholder='Please input your Message' />
                     )}
                 </Form.Item>
 
-                <Form.Item label="Image">
+                <Form.Item label="Attachment">
                     <div className="dropbox">
-                        {getFieldDecorator('image', {
+                        {getFieldDecorator('file', {
                             valuePropName: 'fileList',
                             getValueFromEvent: this.normFile,
                             rules: [{
-                                required: true, message: 'Please select your Image ^0^',
+                                required: true, message: 'Please select your file ^0^',
                             }],
                         })(
                             <Upload.Dragger name="files" beforeUpload={this.beforeUpload}>

@@ -23,7 +23,7 @@ export class CreatePostButton extends React.Component {
                 const token = localStorage.getItem(TOKEN_KEY);
                 const formData = new FormData();
                 formData.set('message', values.message);
-                formData.set('image', values.image[0].originFileObj);
+                formData.set('image', values.file[0].originFileObj);
                 formData.set('lat', lat + 2 * Math.random() * LOC_SHAKE - LOC_SHAKE);
                 formData.set('lon', lon + 2 * Math.random() * LOC_SHAKE - LOC_SHAKE);
                 this.setState({
@@ -49,6 +49,7 @@ export class CreatePostButton extends React.Component {
                 }).then(() => {
                     message.success('Post Created :)');
                 }).catch((err) => {
+                    console.log(err);
                     message.error('Create Post Failed :(');
                     this.setState({
                         confirmLoading: false
@@ -56,17 +57,13 @@ export class CreatePostButton extends React.Component {
                 })
             }
         });
-        this.setState({
-            visible: false,
-            confirmLoading: false,
-        });
     }
 
     handleCancel = () => {
-        console.log('Clicked cancel button');
         this.setState({
             visible: false,
         });
+        this.form.resetFields();
     }
 
     getFormRef = (formInstance) => {

@@ -74,11 +74,13 @@ export class Home extends React.Component {
                 throw new Error('Failed to load posts.');
             })
             .then((data) => {
-                console.log(data);
-                this.setState({
-                    isLoadingPosts: false,
-                    posts: data ? data : []
-                });
+                //console.log(data);
+                if (this.state.topic === 'around') {
+                    this.setState({
+                        isLoadingPosts: false,
+                        posts: data ? data : []
+                    });
+                }
             })
             .catch((e) => {
                 this.setState({
@@ -107,13 +109,20 @@ export class Home extends React.Component {
             .filter(({ type }) => type === 'video')
             .map(({ user, url, message }) => {
                 return (
-                    <Col span={6} key={url}>
+                    <div style={{float: 'left'}} key={url}>
                         <video src={url} controls className='video-block' />
                         <p>{`${user}: ${message}`}</p>
-                    </Col>
+                    </div>
                 );
+                // return (
+                //     <Col span={6} key={url}>
+                //         <video src={url} controls className='video-block' />
+                //         <p>{`${user}: ${message}`}</p>
+                //     </Col>
+                // );
             });
-        return (<Row gutter={32}>{videos}</Row>);
+        return (<div>{videos}</div>);
+        //return (<Row gutter={32}>{videos}</Row>);
     }
 
     getPanelContent = (type) => {
@@ -131,24 +140,64 @@ export class Home extends React.Component {
         }
     }
 
-    onTopicChange = (e) => {
-        this.setState ({
-            topic: e.target.value
+    loadFacesAroundTheWorld = () => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        this.setState({
+            isLoadingPosts: true
         });
+        // Firs API call
+        fetch(`${API_ROOT}/cluster?term=face`, {
+            headers: {
+                Authorization: `${AUTH_HEADER} ${token}`
+            }
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to load posts.');
+            })
+            .then((data) => {
+                if (this.state.topic === 'face') {
+                    this.setState({
+                        isLoadingPosts: false,
+                        posts: data ? data : []
+                    });
+                }
+            })
+            .catch((e) => {
+                this.setState({
+                    isLoadingPosts: false,
+                    error: e.message
+                })
+            });
+    }
+
+    onTopicChange = (e) => {
+        const topic = e.target.value
+        this.setState({
+            //topic: topic
+            topic
+        });
+        if (topic === 'face') {
+            this.loadFacesAroundTheWorld();
+        } else {
+            this.loadNearbyPosts();
+        }
     }
 
     render() {
         const operations = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts} />;
         return (
             <div>
-                <RadioGroup onChange={this.onTopicChange} value={this.state.topic}>
+                <RadioGroup className="topic-radio-group" onChange={this.onTopicChange} value={this.state.topic}>
                     <Radio value="around">Posts Around Me</Radio>
                     <Radio value="face">Faces Around The World</Radio>
                 </RadioGroup>
                 <Tabs className="main-tabs" tabBarExtraContent={operations}>
                     <TabPane tab="Image Posts" key="1">
                         <div>
-                            <h2 style={{color: '#7DCBEC'}}>Beauty is in the eye of the beholder.</h2>
+                            <h2 style={{ color: '#7DCBEC' }}>Beauty is in the eye of the beholder.</h2>
                             {this.getPanelContent('image')}
                         </div>
                     </TabPane>
@@ -162,7 +211,7 @@ export class Home extends React.Component {
                             containerElement={<div style={{ height: `400px` }} />}
                             mapElement={<div style={{ height: `100%` }} />}
                             posts={this.state.posts}
-                            loadNearbyPosts={this.loadNearbyPosts}
+                            loadCurrentTopicPosts={this.state.topic === 'around' ? this.loadNearbyPosts : this.loadFacesAroundTheWorld}
                         />
                     </TabPane>
                 </Tabs>

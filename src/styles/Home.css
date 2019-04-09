@@ -6,4 +6,9 @@
 .video-block{
     height: 400px;
     width: 220px;
+    margin-left: 20px;
+}
+
+.topic-radio-group{
+    margin-bottom: 20px;
 }
