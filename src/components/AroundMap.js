@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-    withScriptjs,
-    withGoogleMap,
-    GoogleMap,
-    Marker,
-    InfoWindow
-} from 'react-google-maps';
+import { withScriptjs, withGoogleMap, GoogleMap } from 'react-google-maps';
 import { AroundMarker } from './AroundMarker';
 import { POS_KEY } from '../constants';
 
 class NormalAroundMap extends React.Component {
-
     reloadMarkers = () => {
         const center = this.getCenter();
         const radius = this.getRadius();
@@ -28,11 +21,9 @@ class NormalAroundMap extends React.Component {
     getRadius = () => {
         const center = this.map.getCenter();
         const bounds = this.map.getBounds();
-
         if (center && bounds) {
             const ne = bounds.getNorthEast();
             const right = new window.google.maps.LatLng(center.lat(), ne.lng());
-
             return 0.001 * window.google.maps.geometry.spherical.computeDistanceBetween(center, right)
         }
     }

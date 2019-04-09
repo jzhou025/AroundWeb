@@ -27,8 +27,9 @@ export class AroundMarker extends React.Component {
         return (
             <Marker
                 position={{ lat, lng }}
-                onMouseOver={this.toggleOpen}
-                onMouseOut={this.toggleOpen}
+                onMouseOver={isImagePost ? this.toggleOpen : null}
+                onMouseOut={isImagePost ? this.toggleOpen : null}
+                onClick={isImagePost ? null : this.toggleOpen}
                 icon = {icon}
             >
                 {
@@ -36,11 +37,19 @@ export class AroundMarker extends React.Component {
                         (
                             <InfoWindow onCloseClick={this.toggleOpen}>
                                 <div>
-                                    <img
-                                        className="around-marker-image"
-                                        src={url}
-                                        alt={message}
-                                    />
+                                    {isImagePost ?
+                                        (<img
+                                            className="around-marker-image"
+                                            src={url}
+                                            alt={message}
+                                        />)
+                                        :
+                                        (<video 
+                                            className="around-marker-video"
+                                            src={url} 
+                                            controls
+                                        />)
+                                    }
                                     <p>{`${user}: ${message}`}</p>
                                 </div>
                             </InfoWindow>
